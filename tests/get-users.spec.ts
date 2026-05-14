@@ -1,7 +1,7 @@
 import { APIRequestContext, expect, request, test } from '@playwright/test';
 import { UsersApis } from '../api/usersApis';
 import { env } from '../config/env';
-import { validateOkStatus, validateJsonContentType, validateUsersListShape, validateSingleUserShape } from '../utils/response.Validators';
+//import { validateOkStatus, validateJsonContentType, validateUsersListShape, validateSingleUserShape } from '../utils/response.Validators';
 
 const BASE_URL = env.apiBaseUrl;
 
@@ -103,8 +103,5 @@ test.describe('GET users API', () => {
   test('returns 404 for a non-existing user endpoint', async () => {
     const response = await usersApis.getUserById(99999);
     expect(response.status()).toBe(404);
-    // Optionally, check that the body is empty or error message is present
-    // const body = await response.text();
-    // expect(body).toBe('');
-  });
+     });
 });
