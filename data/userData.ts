@@ -1,46 +1,53 @@
 /**
- * Valid user payloads for creating new users
+ * Valid user payloads for positive testing - organized in arrays
  */
 export const newUserPayload = [
+  // Test 01: Standard new user
   {
     name: 'John Doe',
     username: 'johndoe',
     email: 'john.doe@example.com',
   },
+  // Test 02: New user with existing name but new username/email
   {
-    name: 'Jane Smith',
-    username: 'janesmith',
-    email: 'jane.smith@example.com',
+    name: 'John Doe',
+    username: 'johndoe_new',
+    email: 'john.doe.new@example.com',
   },
+  // Test 03: New user with existing username but new name/email
   {
-    name: 'Bob Johnson',
-    username: 'bobjohnson',
-    email: 'bob.johnson@example.com',
+    name: 'Jane Doe',
+    username: 'johndoe',
+    email: 'jane.doe@example.com',
   },
+  // Test 04: New user with existing email but new username/name
   {
-    name: 'Alice Williams',
-    username: 'alicewilliams',
-    email: 'alice.williams@example.com',
+    name: 'Jack Doe',
+    username: 'jackdoe',
+    email: 'john.doe@example.com',
   },
 ];
 
 /**
- * Invalid user payloads for negative testing
+ * Invalid user payloads for negative testing - organized in arrays
  */
 export const invalidUserPayload = [
+  // Test 05: Blank name field
   {
     name: '',
-    username: 'invaliduser1',
-    email: 'invalid1@example.com',
+    username: 'blankname_user',
+    email: 'blankname@example.com',
   },
+  // Test 06: Blank username field
   {
-    name: 'Invalid User 2',
+    name: 'Blank Username User',
     username: '',
-    email: 'invalid2@example.com',
+    email: 'blankusername@example.com',
   },
+  // Test 07: Blank email field
   {
-    name: 'Invalid User 3',
-    username: 'invaliduser3',
+    name: 'Blank Email User',
+    username: 'blankemail_user',
     email: '',
   },
 ];

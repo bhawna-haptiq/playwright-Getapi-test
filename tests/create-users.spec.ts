@@ -1,18 +1,10 @@
 import { test, APIRequestContext } from '@playwright/test';
 import { createAPIContext } from '../utils/apiClient.ts';
-import { parseResponse } from '../utils/responseParse.ts';
 import { createUser } from '../utils/apiHelpers.ts';
+import { validateStatusCode, validateResponseType } from '../utils/responseValidations.ts';
+import { validateUserData, validateEmailFormat, validateUserStructure } from '../utils/userValidations.ts';
+import { parseResponse } from '../utils/responseParse.ts';
 import { newUserPayload, invalidUserPayload } from '../data/userData.ts';
-import {
-  expectStatus,
-  expectValidStructure,
-  expectDataMatch,
-  expectValidEmail,
-  expectValidHeaders,
-  expectResponseTime,
-  expectUserCreated,
-  logResponse,
-} from '../utils/testHelpers.ts';
 
 let apiContext: APIRequestContext;
 
@@ -24,75 +16,178 @@ test.afterAll(async () => {
   await apiContext.dispose();
 });
 
-test.describe('POST Users API - Create User Tests', () => {
-  test.describe('✅ POSITIVE TESTS - Valid User Creation', () => {
-    test('01 - Should return 201 status code for valid user', async () => {
-      const response = await createUser(apiContext, newUserPayload[0]);
-      await expectStatus(response, 201);
-    });
+//******************************************************************************************************************************************
+//                                                      TEST SCENARIO: CREATE NEW USER
+//******************************************************************************************************************************************
+test.describe('POST Users API Tests', () => {
 
-    test('02 - Should return correct response structure', async () => {
-      const response = await createUser(apiContext, newUserPayload[1]);
-      const body = await parseResponse(response);
-      expectValidStructure(body);
-    });
+  test('01 Verify using Post method able to Create new user successfully', async () => {
+    const response = await createUser(apiContext, newUserPayload[0]);
 
-    test('03 - Should return user data matching the request payload', async () => {
-      const response = await createUser(apiContext, newUserPayload[2]);
-      const body = await parseResponse(response);
-      expectDataMatch(body, newUserPayload[2]);
-    });
+    // Validating Status Code
+    validateStatusCode(response, 201);
 
-    test('04 - Should return valid email format in response', async () => {
-      const response = await createUser(apiContext, newUserPayload[3]);
-      const body = await parseResponse(response);
-      expectValidEmail(body);
-    });
+    // Converting response to JSON
+    const responseBody = await parseResponse(response);
 
-    test('05 - Should return correct response headers', async () => {
-      const response = await createUser(apiContext, newUserPayload[0]);
-      expectValidHeaders(response);
-    });
+    // Validating Response Structure
+    validateResponseType(responseBody);
 
-    test('06 - Should complete user creation within acceptable time', async () => {
-      const response = await createUser(apiContext, newUserPayload[1]);
-      expectResponseTime(response, 5000);
-    });
+    // Validating Required Fields
+    validateUserStructure(responseBody);
 
-    test('07 - Should create complete user with all validations', async () => {
-      const response = await createUser(apiContext, newUserPayload[2]);
-      await expectUserCreated(response, newUserPayload[2]);
-    });
+    // Validate Response Data
+    validateUserData(responseBody, newUserPayload[0]);
 
-    test('08 - Should create multiple independent users', async () => {
-      const response1 = await createUser(apiContext, newUserPayload[0]);
-      const user1 = await expectUserCreated(response1, newUserPayload[0]);
-
-      const response2 = await createUser(apiContext, newUserPayload[1]);
-      const user2 = await expectUserCreated(response2, newUserPayload[1]);
-
-      logResponse('User 1 created', user1);
-      logResponse('User 2 created', user2);
-    });
+    // Validate Email Format
+    validateEmailFormat(responseBody.email);
   });
 
-  test.describe('❌ NEGATIVE TESTS - Invalid User Handling', () => {
-    test('09 - Should handle user creation with blank name field', async () => {
-      const response = await createUser(apiContext, invalidUserPayload[0]);
-      const body = await parseResponse(response);
-      logResponse('Response for blank name', body);
-    });
+  //******************************************************************************************************************************************
+  //                               TEST SCENARIO 2: CREATE NEW USER WITH EXISTING NAME AND NEW USERNAME AND EMAIL
+  //******************************************************************************************************************************************
+  test('02 Verify using Post method able to Create new user with existing name and new user name and email successfully', async () => {
+    const response = await createUser(apiContext, newUserPayload[1]);
 
-    test('10 - Should handle user creation with blank username field', async () => {
-      const response = await createUser(apiContext, invalidUserPayload[1]);
-      const body = await parseResponse(response);
-      logResponse('Response for blank username', body);
-    });
+    // Validating Status Code
+    validateStatusCode(response, 201);
 
-    test('11 - Should handle user creation with blank email field', async () => {
-      const response = await createUser(apiContext, invalidUserPayload[2]);
-      const body = await parseResponse(response);
-      logResponse('Response for blank email', body);
-    });
+    // Converting response to JSON
+    const responseBody = await parseResponse(response);
+
+    // Validating Response Structure
+    validateResponseType(responseBody);
+
+    // Validating Required Fields
+    validateUserStructure(responseBody);
+
+    // Validate Response Data
+    validateUserData(responseBody, newUserPayload[1]);
+
+    // Validate Email Format
+    validateEmailFormat(responseBody.email);
   });
+
+  //******************************************************************************************************************************************
+  //                               TEST SCENARIO 3: CREATE NEW USER WITH EXISTING USERNAME AND NEW NAME AND EMAIL
+  //******************************************************************************************************************************************
+  test('03 Verify using Post method able to Create new user with existing username and new name and email successfully', async () => {
+    const response = await createUser(apiContext, newUserPayload[2]);
+
+    // Validating Status Code
+    validateStatusCode(response, 201);
+
+    // Converting response to JSON
+    const responseBody = await parseResponse(response);
+
+    // Validating Response Structure
+    validateResponseType(responseBody);
+
+    // Validating Required Fields
+    validateUserStructure(responseBody);
+
+    // Validate Response Data
+    validateUserData(responseBody, newUserPayload[2]);
+
+    // Validate Email Format
+    validateEmailFormat(responseBody.email);
+  });
+
+  //******************************************************************************************************************************************
+  //                               TEST SCENARIO 4: CREATE NEW USER WITH EXISTING EMAIL AND NEW USERNAME AND NAME
+  //******************************************************************************************************************************************
+  test('04 Verify using Post method able to Create new user with existing email and new username and name successfully', async () => {
+    const response = await createUser(apiContext, newUserPayload[3]);
+
+    // Validating Status Code
+    validateStatusCode(response, 201);
+
+    // Converting response to JSON
+    const responseBody = await parseResponse(response);
+
+    // Validating Response Structure
+    validateResponseType(responseBody);
+
+    // Validating Required Fields
+    validateUserStructure(responseBody);
+
+    // Validate Response Data
+    validateUserData(responseBody, newUserPayload[3]);
+
+    // Validate Email Format
+    validateEmailFormat(responseBody.email);
+  });
+
+  //******************************************************************************************************************************************
+  //                               TEST SCENARIO 5: CREATE NEW USER BY LEAVING NAME FIELD BLANK
+  //******************************************************************************************************************************************
+  test('05 Verify using Post method able to Create new user by leaving name field blank', async () => {
+    const response = await createUser(apiContext, invalidUserPayload[0]);
+
+    // Validating Status Code
+    validateStatusCode(response, 201);
+
+    // Converting response to JSON
+    const responseBody = await parseResponse(response);
+
+    // Validating Response Structure
+    validateResponseType(responseBody);
+
+    // Validating Required Fields
+    validateUserStructure(responseBody);
+
+    // Validate Response Data
+    validateUserData(responseBody, invalidUserPayload[0]);
+
+    // Validate Email Format
+    validateEmailFormat(responseBody.email);
+  });
+
+  //******************************************************************************************************************************************
+  //                               TEST SCENARIO 6: CREATE NEW USER BY LEAVING USERNAME FIELD BLANK
+  //******************************************************************************************************************************************
+  test('06 Verify using Post method able to Create new user by leaving user name field blank', async () => {
+    const response = await createUser(apiContext, invalidUserPayload[1]);
+
+    // Validating Status Code
+    validateStatusCode(response, 201);
+
+    // Converting response to JSON
+    const responseBody = await parseResponse(response);
+
+    // Validating Response Structure
+    validateResponseType(responseBody);
+
+    // Validating Required Fields
+    validateUserStructure(responseBody);
+
+    // Validate Response Data
+    validateUserData(responseBody, invalidUserPayload[1]);
+
+    // Validate Email Format
+    validateEmailFormat(responseBody.email);
+  });
+
+  //******************************************************************************************************************************************
+  //                               TEST SCENARIO 7: CREATE NEW USER BY LEAVING EMAIL FIELD BLANK
+  //******************************************************************************************************************************************
+  test('07 Verify using Post method able to Create new user by leaving email field blank', async () => {
+    const response = await createUser(apiContext, invalidUserPayload[2]);
+
+    // Validating Status Code
+    validateStatusCode(response, 201);
+
+    // Converting response to JSON
+    const responseBody = await parseResponse(response);
+
+    // Validating Response Structure
+    validateResponseType(responseBody);
+
+    // Validating Required Fields
+    validateUserStructure(responseBody);
+
+    // Validate Response Data
+    validateUserData(responseBody, invalidUserPayload[2]);
+  });
+
 });
